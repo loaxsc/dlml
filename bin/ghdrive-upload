@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# 這個使用上是有限制的，無法上傳太大的檔案，測到小 10MB 就不行了。
+if [ $# -ge 2 ]; then
+	fname="$(echo "$2" | sed 's!.\+/!!')"
+	ghupload upload -m "$1"  "$2" "loaxsc/ghdrive/$fname" && \
+	echo "\nwget https://raw.githubusercontent.com/loaxsc/ghdrive/main/$fname\n"
+elif [ $# -eq 1 ]; then
+	fname="$(echo "$1" | sed 's!.\+/!!')"
+	ghupload upload -m "upload $fname"  "$1" "loaxsc/ghdrive/$fname" && \
+	echo "\nwget https://raw.githubusercontent.com/loaxsc/ghdrive/main/$fname\n"
+else
+	echo 'ghdrive-upload "file"\nghdrive-upload "commit message" "file"'
+fi

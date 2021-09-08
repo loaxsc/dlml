@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if [ "$1" ]; then
+    cd /kaggle/dlml
+    git add .
+    git commit -m "$1" # $1 is commit message
+    git push
+else
+    echo 'need commit message'
+fi

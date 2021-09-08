@@ -1,0 +1,7 @@
+#!/bin/sh
+
+cd /kaggle/dlml/bin
+echo '#!/bin/sh
+' > "$1"
+
+chmod 700 "$1"

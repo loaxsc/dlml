@@ -1,0 +1,24 @@
+#!/bin/sh
+
+git config --global user.email "loaxs.chen@gmail.com"
+git config --global user.name  "loaxsc"
+
+cd /kaggle
+cp -f dlml/init/sys_clear ./
+
+echo 'Download .gitignore'
+wget -q https://raw.githubusercontent.com/loaxsc/ghdrive/main/.gitignore -O dlml/.gitignore
+ln -snf dlml/bin bin
+
+# for pydrive (google drive)
+cp /kaggle/input/kaggle-init/client_secrets.json /bin
+ln -f /kaggle/dlml/bin/gd-upload-file /bin/gd-upload-file
+
+if [ ! -e '/bin/ghupload' ]; then
+    cd /bin
+    echo 'Download /bin/ghupload'
+    wget -q https://raw.githubusercontent.com/loaxsc/ghdrive/main/ghupload.tar.bz2
+	echo 'Extract ghupload to /bin'
+    tar -jxf ghupload.tar.bz2
+    rm ghupload.tar.bz2
+fi

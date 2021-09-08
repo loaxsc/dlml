@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd /root
+tar -jcvf kaggle-root-dir.tar.bz2 .ssh .gitconfig
+mv kaggle-root-dir.tar.bz2 /kaggle/working/dlml

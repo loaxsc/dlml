@@ -1,0 +1,19 @@
+
+#!/opt/conda/bin/python
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+
+gauth = GoogleAuth()
+
+# use gd-get-cred-file in local PC to get pydrive.json
+credential_file = '/kaggle/input/kaggle-init/pydrive.json'
+gauth.LoadCredentialsFile(credential_file)
+drive = GoogleDrive(gauth)
+
+# View all folders and file in your Google Drive
+fileList = drive.ListFile({'q': "'root' in parents and trashed=false"}).GetList()
+for file in fileList:
+    print('Title: %s, ID: %s' % (file['title'], file['id']))
+    # Get the folder ID that you want
+    if (file['title'] == "To Share"):
+        fileID = file['id']

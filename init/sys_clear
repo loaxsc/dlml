@@ -1,0 +1,5 @@
+#!/bin/bash
+
+if [ -e '/kaggle/bin' ]; then
+	rm -r /kaggle/bin /kaggle/dlml /bin/ghupload /bin/gd-upload-file
+fi
