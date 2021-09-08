@@ -45,7 +45,10 @@ def get_file_link(path):
     if 'working' not in os.path.abspath(abspath):
         print('copy to /kaggle/working/%s' % filename)
         shutil.copy(abspath, '/kaggle/working') # 無法用 symlink，已測試過
+        org_dir = os.getcwd()
+        os.chdir('/kaggle/working')
         display(FileLink(filename))
+        os.chdir(org_dir)
         cell = '%%update_file_from_ghdrive %s' % abspath
     else:
         display(FileLink(path))
