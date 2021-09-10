@@ -4,7 +4,9 @@ if [ "$1" ]; then
     cd /kaggle/dlml
     git add .
     git commit -m "$1" # $1 is commit message
-    git push
+	token="$(cat /root/.config/ghupload/github-token)"
+	#git push https://[GITHUB_ACCESS_TOKEN]@github.com/[GITHUB_USERNAME]/[REPOSITORY_NAME].git
+    git push https://${token}@github.com/loaxsc/dlml.git
 else
     echo 'need commit message'
 fi
