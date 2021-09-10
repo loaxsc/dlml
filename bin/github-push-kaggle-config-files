@@ -2,11 +2,12 @@
 
 if [ "$1" ]; then
     cd /kaggle/dlml
-    git add .
-    git commit -m "$1" # $1 is commit message
-	#token="$(cat /root/.config/ghupload/github-token)"
-    #git push https://${token}@github.com/loaxsc/dlml.git
-	git push
+    #git add .
+    #git commit -m "$1" # $1 is commit message
+	##token="$(cat /root/.config/ghupload/github-token)"
+    ##git push https://${token}@github.com/loaxsc/dlml.git
+	#git push
+	git remote set-url origin https://loaxsc:$(cat /root/.config/ghupload/github-token )@github.com/loaxsc/dlml.git
 else
     echo 'need commit message'
 fi
