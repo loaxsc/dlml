@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# 這個使用上是有限制的，無法上傳太大的檔案，測到小 10MB 就不行了。
+# 不支援 binary 的更新！要重新命名後上傳。
 if [ $# -ge 2 ]; then
 	fname="$(echo "$2" | sed 's!.\+/!!')"
 	ghupload upload -m "$1"  "$2" "loaxsc/ghdrive/$fname" && \
