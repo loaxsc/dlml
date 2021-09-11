@@ -57,7 +57,7 @@ def get_file_link(path):
 
 sh_code_update_file_from_ghdrive = """
 echo 'Download {filename}'
-wget -q https://github.com/loaxsc/ghdrive/raw/main/{filename} -O {path}
+wget -q https://raw.githubusercontent.com/loaxsc/ghdrive/main/{filename} -O {path}
 echo '{path} is updated !'
 """
 @register_line_magic

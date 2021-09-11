@@ -2,23 +2,42 @@
 
 # initialization
 import requests, base64, json
+import threading
 import os, sys
-
-from IPython.display import display
 
 if len(sys.argv) < 3:
     print('ghdrive-upload-py3 \'commit message\' file_path')
     exit()
+
 commit_message = sys.argv[1]
 path = sys.argv[2]
 user = "loaxsc"
 repo = "ghdrive"
 branch = 'main'
-token = open('/home/root/.config/ghupload/github-token').read().strip()
+token = open(f'{os.environ["HOME"]}/.config/ghupload/github-token').read().strip()
 
 textchars = bytearray({7,8,9,10,12,13,27} | set(range(0x20, 0x100)) - {0x7f})
 is_binary_string = lambda bytes: bool(bytes.translate(None, textchars))
 
+def job_blob():
+    # make blob in github
+    global sha_new_blob
+    url = f"https://api.github.com/repos/{user}/{repo}/git/blobs"
+    if os.path.getsize(path) > 1024 * 1024 or is_binary_string(open(path,'rb').read(1024)):
+        data = { 'content': base64.encodebytes(open(path,'rb').read()).decode(),
+                 'encoding': 'base64' }
+        print('blob')
+    else:
+        data = { 'content': open(path,'r').read(), 'encoding': 'utf-8' }
+        print('utf-8')
+
+    # headers = { 'Authorization': 'token ' + token }
+    r = requests.post(url, data=json.dumps(data), auth=(user,token))
+    res = r.json()
+    sha_new_blob = res['sha']
+
+t = threading.Thread(target = job_blob)
+t.start()
 
 # Github authorization.
 ses = requests.Session()
@@ -26,30 +45,19 @@ ses.headers.update({'Accept': 'application/vnd.github.v3+json'})
 ses.auth = ('loaxsc',token)
 auth = ses.post('https://www.github.com')
 
-# 查詢 commits, 找到 base_tree sha
-url = "https://api.github.com/repos/{}/{}/git/refs/heads/main".format(user, repo)
+# query commits, find base_tree sha
+url = f"https://api.github.com/repos/{user}/{repo}/git/refs/heads/main"
 r = ses.get(url)
 res = r.json()
 sha_last_commit = res['object']['sha']
 sha_base_tree = ses.get(res['object']['url']).json()['tree']['sha']
 # sha_last_commit, sha_base_tree
 
-# make tree in github, binary data.
-url = "https://api.github.com/repos/{}/{}/git/blobs".format(user, repo)
-if os.path.getsize(path) > 1024 * 1024 or is_binary_string(open(path,'rb').read(1024)):
-    data = { 'content': base64.encodebytes(open(path,'rb').read()).decode(),
-             'encoding': 'base64' }
-    print('blob')
-else:
-    data = { 'content': open(path,'r').read(), 'encoding': 'utf-8' }
-    print('utf-8')
-
-r = ses.post(url, data=json.dumps(data))
-res = r.json()
-sha_new_blob = res['sha']
+# wait for sha_new_blob
+t.join()
 
 # make new tree
-url = "https://api.github.com/repos/{}/{}/git/trees".format(user, repo)
+url = f"https://api.github.com/repos/{user}/{repo}/git/trees"
 data = {
     'base_tree': sha_base_tree,
     'tree': [{
@@ -60,25 +68,19 @@ data = {
     }],
 }
 
-r = ses.post(url, data=json.dumps(data))
-res = r.json()
-sha_new_tree = res['sha']
-# sha_new_tree#, res
+sha_new_tree = ses.post(url, data=json.dumps(data)).json()['sha']
 
 # make commit in github
-url = "https://api.github.com/repos/{}/{}/git/commits".format(user, repo)
+url = f"https://api.github.com/repos/{user}/{repo}/git/commits"
 data = {
     'message': commit_message,
     'parents': [sha_last_commit],
     'tree': sha_new_tree,
 }
-r = ses.post(url, data = json.dumps(data))
-res = r.json()
-sha_new_commit = res['sha']
-sha_new_commit#, res
+sha_new_commit = ses.post(url, data = json.dumps(data)).json()['sha']
 
 # update reference in github
-url = "https://api.github.com/repos/{}/{}/git/refs/heads/main".format(user, repo)
+url = f"https://api.github.com/repos/{user}/{repo}/git/refs/heads/main"
 payload = {
     'sha': sha_new_commit,
     'force': True,
@@ -86,3 +88,6 @@ payload = {
 r = ses.patch(url, json.dumps(payload))
 # res = r.json()
 # res
+
+msg = f'\nwget https://raw.githubusercontent.com/{user}/{repo}/main/{path}\n'
+print(msg)
