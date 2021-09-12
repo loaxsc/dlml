@@ -57,12 +57,15 @@ def get_file_link(path):
     get_ipython().set_next_input(cell,False)
 
 def tar_dir_link(path):
+    org_dir = os.getpwd()
+    org_os_chdir('/kaggle/working')
     dir_name = re.sub(r'.+/', '', path)
     parent_path = re.sub(r'[^/]+$', '', os.path.abspath(path))
     get_ipython().system(f"cd {parent_path};"
                           "tar -jcf {dir_name}.tar.bz2 {dir_name};"
                           "mv {dir_name}.tar.bz2 /kaggle/working/")
     display(FileLink(f"{dir_name}.tar.bz2"))
+    org_os_chdir(org_dir)
 
 sh_code_update_file_from_ghdrive = """
 echo 'Download {filename}'
