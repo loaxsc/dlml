@@ -4,6 +4,7 @@ git config --global user.email "loaxs.chen@gmail.com"
 git config --global user.name  "loaxsc"
 
 cd /kaggle
+[ ! -e ghdrive ] && mkdir ghdrive
 cp -f dlml/init/sys_clear ./
 
 echo 'Download .gitignore'

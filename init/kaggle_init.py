@@ -2,6 +2,7 @@
 
 import shutil
 import os
+import re
 
 from IPython.core.magic import (register_line_magic, register_cell_magic,
                                 register_line_cell_magic)
@@ -54,6 +55,14 @@ def get_file_link(path):
         display(FileLink(path))
         cell = '%%update_file_from_ghdrive %s' % path
     get_ipython().set_next_input(cell,False)
+
+def tar_dir_link(path):
+    dir_name = re.sub(r'.+/', '', path)
+    parent_path = re.sub(r'[^/]+$', '', os.path.abspath(path))
+    get_ipython().system(f"cd {parent_path};"
+                          "tar -jcf {dir_name}.tar.bz2 {dir_name};"
+                          "mv {dir_name}.tar.bz2 /kaggle/working/")
+    display(FileLink(f"{dir_name}.tar.bz2")
 
 sh_code_update_file_from_ghdrive = """
 echo 'Download {filename}'
