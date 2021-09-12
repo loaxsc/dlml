@@ -62,7 +62,7 @@ def tar_dir_link(path):
     get_ipython().system(f"cd {parent_path};"
                           "tar -jcf {dir_name}.tar.bz2 {dir_name};"
                           "mv {dir_name}.tar.bz2 /kaggle/working/")
-    display(FileLink(f"{dir_name}.tar.bz2")
+    display(FileLink(f"{dir_name}.tar.bz2"))
 
 sh_code_update_file_from_ghdrive = """
 echo 'Download {filename}'
