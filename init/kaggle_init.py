@@ -57,7 +57,7 @@ def get_file_link(path):
     get_ipython().set_next_input(cell,False)
 
 def tar_dir_link(path):
-    org_dir = os.getpwd()
+    org_dir = os.getcwd()
     org_os_chdir('/kaggle/working')
     dir_name = re.sub(r'.+/', '', path)
     parent_path = re.sub(r'[^/]+$', '', os.path.abspath(path))
