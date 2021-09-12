@@ -77,7 +77,7 @@ def update_file_from_ghdrive(line):
 # %loadfile
 js_code_loadfile="""\
 if ( typeof content_changed == 'undefined' ) {
-     widnow.content_changed = (e) => {
+     window.content_changed = (e) => {
         var cell = e.target.parentElement.parentElement;
         if ( !cell.className.includes('changed') ) {
             cell.className += ' changed ';
